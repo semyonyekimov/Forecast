@@ -6,7 +6,7 @@ class Favourite extends React.Component {
     this.state = {};
   }
   render() {
-    return <div className="favourite"></div>;
+    return <div className="favourite">{this.props.favourites}</div>;
   }
 }
 

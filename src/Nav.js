@@ -2,6 +2,7 @@ import React from "react";
 import Favourite from "./Favourite";
 import Home from "./Home";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import Forecast from "./Forecast";
 
 class Nav extends React.Component {
   constructor(props) {
@@ -23,6 +24,7 @@ class Nav extends React.Component {
           <Switch>
             <Route exact path="/favourite" component={Favourite} />
             <Route exact path="/home" component={Home} />
+            <Route path="/city/:id" component={Forecast} />
           </Switch>
         </div>
       </Router>

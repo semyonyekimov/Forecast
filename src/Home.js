@@ -1,6 +1,5 @@
 import React from "react";
-import Forecast from "./Forecast";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Route, Link } from "react-router-dom";
 
 class Home extends React.Component {
   constructor(props) {
@@ -8,7 +7,6 @@ class Home extends React.Component {
     this.state = {
       searchValue: "",
       cities: [],
-      weather: [],
       favourites: []
     };
   }
@@ -22,16 +20,6 @@ class Home extends React.Component {
         });
       });
 
-  getWeather = woeid => {
-    fetch(`http://localhost:8089/city/${woeid}/`)
-      .then(response => response.json())
-      .then(response => {
-        this.setState({
-          weather: response.data.consolidated_weather
-        });
-      });
-  };
-
   handleSearch = event => {
     this.setState({
       searchValue: event.target.value
@@ -39,49 +27,79 @@ class Home extends React.Component {
   };
 
   addFavourites = id => {
-    this.setState({
-      favourites: this.state.favourites.push(
-        this.state.cities[id].title,
-        this.state.cities[id].woeid
-      )
+    // this.state.favourites.push(
+    //   this.state.cities[id].title,
+    //   this.state.cities[id].woeid
+    // );
+    this.state.favourites.push({
+      title: this.state.cities[id].title,
+      woeid: this.state.cities[id].woeid
     });
+
+    this.setState({
+      favourites: this.state.favourites
+    });
+    console.log(this.state.favourites);
+  };
+
+  deleteFromFavourites = id => {
+    for (let i = 0; i < this.state.favourites.length - 1; i++) {
+      // тут хуйня
+      if (this.state.favourites[i] === id) this.state.favourites.splice(id, 1);
+      console.log(this.state.cities[id]);
+    }
+    this.setState({
+      favourites: this.state.favourites
+    });
+    console.log(this.state.favourites);
+    console.log(this.state.favourites[id]);
   };
 
   render() {
     return (
-      <Router>
-        <div className="main">
-          <div className="input">
-            <input
-              type="text"
-              placeholder="search"
-              onChange={event => this.handleSearch(event)}
-              value={this.state.searchValue}
-            />
-            <button onClick={() => this.dynamicFetchCity()}>Submit</button>
-          </div>
-          <div className="list">
-            {this.state.cities.map((city, i) => (
-              <div key={i}>
-                <span
-                  onClick={() => this.getWeather(this.state.cities[i].woeid)}
-                >
-                  <Link to={`/city/${i}`}>{this.state.cities[i].title}</Link>
-                </span>
-                <button onClick={() => this.addFavourites(i)}>Add</button>
-              </div>
-            ))}
-          </div>
-          <Switch>
-            <Route
-              exact
-              path={"/city/:id"}
-              render={() => <Forecast weather={this.state.weather} />}
-            />
-          </Switch>
+      <div className="main">
+        <div className="input">
+          <input
+            type="text"
+            placeholder="search"
+            onChange={event => this.handleSearch(event)}
+            value={this.state.searchValue}
+          />
+          <button onClick={() => this.dynamicFetchCity()}>Submit</button>
         </div>
-      </Router>
+        <div className="list">
+          {this.state.cities.map((city, i) => (
+            <div key={i}>
+              <Link to={`/city/${city.woeid}`}>{city.title}</Link>
+              <button onClick={() => this.addFavourites(i)}>Add</button>
+              <button onClick={() => this.deleteFromFavourites(i)}>
+                Delete
+              </button>
+              <br></br>
+            </div>
+          ))}
+        </div>
+      </div>
     );
   }
 }
 export default Home;
+
+{
+  /* <Link to={`/city/${city.woeid}`} key={i}>
+{city.title}
+<button onClick={() => this.addFavourites(i)}>Add</button>
+<br></br>
+</Link> */
+}
+
+// this.state.favourites.splice(id, 1);
+// this.setState({
+//   favourites: this.state.favourites
+// });
+// console.log(this.state.favourites);
+// };
+
+// this.state.favourites.filter(el => {
+//   return el !== el[id];
+// });
